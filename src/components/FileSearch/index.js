@@ -1,8 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const FileSearch = ({ title, onFileSearch }) => {
   const [inputActive, setInputActive] = useState(false);
   const [value, setValue] = useState("");
+  let node = useRef(null);
+  const closeSearch = (e) => {
+    e.preventDefault();
+    setInputActive(false);
+    setValue("");
+  };
+
+  useEffect(() => {
+    const handleInputEvent = (e) => {
+      const { keyCode } = e;
+      //   enter是13
+      if (keyCode === 13 && inputActive) {
+        onFileSearch(value);
+        // esc 是 27
+      } else if (keyCode === 27 && inputActive) {
+        closeSearch(e);
+      }
+    };
+    document.addEventListener("keyup", handleInputEvent);
+    return () => {
+      document.removeEventListener("keyup", handleInputEvent);
+    };
+  });
+
+  useEffect(() => {
+    if (inputActive) {
+      node.current.focus();
+    }
+  }, [inputActive]);
   return (
     <div className="alert alert-primary">
       {!inputActive && (
@@ -19,15 +48,18 @@ const FileSearch = ({ title, onFileSearch }) => {
       )}
       {inputActive && (
         <div className="row">
-          <input 
-            className="form-control col-8" 
+          <input
+            className="form-control col-8"
             value={value}
-            onChange = {(e)=>setValue(e.target.value)}
-            />
+            onChange={(e) => setValue(e.target.value)}
+            ref={node}
+          />
           <button
             type="button"
             className="btn btn-primary col-4"
-            onClick={() => setInputActive(false)}
+            onClick={(e) => {
+              closeSearch(e);
+            }}
           >
             关闭
           </button>
