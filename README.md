@@ -1,8 +1,10 @@
 ## Introduction
 
-一个`markdown文本解析工具`使用`React`和`Electron`共同打造桌面端应用程序。
+一个基于`electron`和`react`开发的桌面端应用程序
 
-样式库使用`bootstrap`.
+样式库使用`bootstrap`来简化操作,图标库由`svg`来做的.
+
+
 
 ## Notice
 - 不要过度思考去选择项目目录，直接开干
