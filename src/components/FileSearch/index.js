@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import PropTypes from "prop-types";
 
 const FileSearch = ({ title, onFileSearch }) => {
   const [inputActive, setInputActive] = useState(false);
@@ -45,7 +46,7 @@ const FileSearch = ({ title, onFileSearch }) => {
             className="icon-button"
             onClick={() => setInputActive(true)}
           >
-            <FontAwesomeIcon title="搜索" icon={faSearch} size="lg"/>
+            <FontAwesomeIcon title="搜索" icon={faSearch} size="lg" />
           </button>
         </>
       )}
@@ -57,17 +58,22 @@ const FileSearch = ({ title, onFileSearch }) => {
             onChange={(e) => setValue(e.target.value)}
             ref={node}
           />
-          <button
-            type="button"
-            className="icon-button"
-            onClick={closeSearch}
-          >
-            <FontAwesomeIcon title="关闭" icon={ faTimes } size="lg"/>            
+          <button type="button" className="icon-button" onClick={closeSearch}>
+            <FontAwesomeIcon title="关闭" icon={faTimes} size="lg" />
           </button>
         </div>
       )}
     </div>
   );
+};
+
+FileSearch.propTypes = {
+  title: PropTypes.string,
+  onFileSearch: PropTypes.func.isRequired
+}
+
+FileSearch.defaultProps = {
+  title: "我的云文档",
 };
 
 export default FileSearch;
