@@ -12,10 +12,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
           key={file.id}
         >
           <span className="col-2">
-              <FontAwesomeIcon
-                size="lg"
-                icon={faMarkdown}
-              />
+            <FontAwesomeIcon size="lg" icon={faMarkdown} />
           </span>
           <span className="col-8">{file.title}</span>
           <button
@@ -23,22 +20,14 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
             className="icon-button col-1"
             onClick={() => {}}
           >
-            <FontAwesomeIcon 
-              title="编辑"
-              size="lg"
-              icon={faEdit}
-            />
+            <FontAwesomeIcon title="编辑" size="lg" icon={faEdit} />
           </button>
           <button
             type="button"
             className="icon-button col-1"
             onClick={() => {}}
           >
-            <FontAwesomeIcon 
-              title="删除"
-              size="lg"
-              icon={faTrash}
-            />
+            <FontAwesomeIcon title="删除" size="lg" icon={faTrash} />
           </button>
         </li>
       ))}
