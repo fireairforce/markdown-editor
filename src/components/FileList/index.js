@@ -21,8 +21,10 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
       if (keyCode === 13 && editStatus) {
         const editItem = files.find((file) => file.id === editStatus);
         onSaveEdit(editItem.id, value);
-        // esc 是 27
+        setEditStatus(false);
+        setValue('');
       } else if (keyCode === 27 && editStatus) {
+        // esc 是 27
         closeSearch(e);
       }
     };
