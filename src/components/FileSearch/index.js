@@ -2,32 +2,42 @@ import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
+import useKeyPress from "../../hooks/useKeyPress";
 
 const FileSearch = ({ title, onFileSearch }) => {
   const [inputActive, setInputActive] = useState(false);
   const [value, setValue] = useState("");
+  //　enter键
+  const enterPressed = useKeyPress(13);
+  // esc键
+  const escPressed = useKeyPress(27);
   let node = useRef(null);
-  const closeSearch = (e) => {
-    e.preventDefault();
+  const closeSearch = () => {
     setInputActive(false);
     setValue("");
   };
 
   useEffect(() => {
-    const handleInputEvent = (e) => {
-      const { keyCode } = e;
-      //   enter是13
-      if (keyCode === 13 && inputActive) {
-        onFileSearch(value);
-        // esc 是 27
-      } else if (keyCode === 27 && inputActive) {
-        closeSearch(e);
-      }
-    };
-    document.addEventListener("keyup", handleInputEvent);
-    return () => {
-      document.removeEventListener("keyup", handleInputEvent);
-    };
+    if(enterPressed && inputActive) {
+      onFileSearch(value)
+    } 
+    if(escPressed && inputActive) {
+      closeSearch()
+    }
+    // const handleInputEvent = (e) => {
+    //   const { keyCode } = e;
+    //   //   enter是13
+    //   if (keyCode === 13 && inputActive) {
+    //     onFileSearch(value);
+    //     // esc 是 27
+    //   } else if (keyCode === 27 && inputActive) {
+    //     closeSearch(e);
+    //   }
+    // };
+    // document.addEventListener("keyup", handleInputEvent);
+    // return () => {
+    //   document.removeEventListener("keyup", handleInputEvent);
+    // };
   });
 
   useEffect(() => {
