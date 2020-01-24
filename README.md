@@ -6,6 +6,9 @@
 
 hooks目录下为一些自定义的hooks
 
+使用`prop-types`来完成类型检测
+
+使用`classnames`来完成`className`的属性拼接
 
 ## Notice
 - 不要过度思考去选择项目目录，直接开干
