@@ -55,7 +55,9 @@ function App() {
           <TableList
             files={defaultFiles}
             onTabClick = {(e)=>{console.log(e);}}
+            onCloseTab = {(e) =>{console.log(`closing, ${e}`);}}
             activeId="1"
+            unsaveIds={['1','2']}
           />
         </div>
       </div>
