@@ -15,5 +15,5 @@ app.on("ready", () => {
   const urlLocation = isDev ? "http://localhost:3000" : "dummyUrl";
   mainWindow.loadURL(urlLocation);
   // 打开调式窗口
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 });

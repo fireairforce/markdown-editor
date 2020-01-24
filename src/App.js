@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import FileSearch from "./components/FileSearch";
 import FileList from "./components/FileList";
 import BottomBtn from "./components/BottomBtn";
+import TableList from "./components/TableList";
 import defaultFiles from "./utils/defaultFiles";
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
     <div className="App container-fluid px-0">
       {/* no-gutters用来除去边距 */}
       <div className="row no-gutters">
-        <div className="col-6 bg-light left-panel">
+        <div className="col-3 bg-light left-panel">
           <FileSearch
             title="我的云文档"
             onFileSearch={(value) => {
@@ -50,8 +51,10 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="col-6 bg-primary right-panel">
-          <h1>right</h1>
+        <div className="col-9 right-panel">
+          <TableList
+            files={defaultFiles}
+          />
         </div>
       </div>
     </div>
