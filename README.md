@@ -10,6 +10,15 @@ hooks目录下为一些自定义的hooks
 
 使用`classnames`来完成`className`的属性拼接
 
+根据文档可以为`cra`添加`sass`文件的的解析功能
+
+### makrkown 库的选择
+- 支持预览模式
+- 支持高亮显示不同的内容
+- 自定义工具栏
+
+选用[esaymde](https://github.com/Ionaru/easy-markdown-editor) 来作为本次开发的`md`文本编辑器。
+
 ## Notice
 - 不要过度思考去选择项目目录，直接开干
 
