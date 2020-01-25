@@ -47,17 +47,22 @@ const App = () => {
     }
   };
 
-  const fileChange = (id, value) => {
+  //  update title or body
+  const updateContent = (id, updateContents, type = "title") => {
     // loop throught the files and exchange a new body
     const newFiles = files.map((file) => {
-      if (file.id === id) {
-        file.body = value;
+      if (file.id === id && type === "value") {
+        file.body = updateContents;
+      } else if (file.id === id && type === "title") {
+        file.title = updateContents;
       }
       return file;
     });
     setFiles(newFiles);
-    if (!unsavedFileIDs.includes(id)) {
-      setUnsavedFileIDs([...unsavedFileIDs, id]);
+    if (type === "value") {
+      if (!unsavedFileIDs.includes(id)) {
+        setUnsavedFileIDs([...unsavedFileIDs, id]);
+      }
     }
   };
 
@@ -66,17 +71,6 @@ const App = () => {
     setFiles(newFiles);
     // close the tab if opened
     tabClose(id);
-  };
-
-  const updateFileName = (id, title) => {
-    // loop through files,and update the title
-    const newFiles = files.map((file) => {
-      if (file.id === id) {
-        file.title = title;
-      }
-      return file;
-    });
-    setFiles(newFiles);
   };
 
   const fileSearch = (keyword) => {
@@ -108,7 +102,7 @@ const App = () => {
               deleteFile(id);
             }}
             onSaveEdit={(id, value) => {
-              updateFileName(id, value);
+              updateContent(id, value, "title");
             }}
           />
           <div className="row no-gutters button-group">
@@ -145,7 +139,7 @@ const App = () => {
                 key={activeFiles && activeFileIDs}
                 value={activeFiles && activeFiles.body}
                 onChange={(value) => {
-                  fileChange(activeFiles.id, value);
+                  updateContent(activeFiles.id, value, "value");
                 }}
                 options={{
                   minHeight: "515px",
