@@ -15,6 +15,7 @@ const App = () => {
   const [activeFileIDs, setActiveFileIDs] = useState("");
   const [openedFileIDs, setOpenedFileIDs] = useState([]);
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([]);
+  const [searchedFiles, setSearchedFiles] = useState([]);
   const openedFiles = openedFileIDs.map((openID) => {
     return files.find((file) => file.id === openID);
   });
@@ -60,7 +61,32 @@ const App = () => {
     }
   };
 
+  const deleteFile = (id) => {
+    const newFiles = files.filter((file) => file.id !== id);
+    setFiles(newFiles);
+    // close the tab if opened
+    tabClose(id);
+  };
+
+  const updateFileName = (id, title) => {
+    // loop through files,and update the title
+    const newFiles = files.map((file) => {
+      if (file.id === id) {
+        file.title = title;
+      }
+      return file;
+    });
+    setFiles(newFiles);
+  };
+
+  const fileSearch = (keyword) => {
+    // filter out the new files based on the keyword
+    const newFiles = files.filter((file) => file.title.includes(keyword));
+    setSearchedFiles(newFiles);
+  };
+
   const activeFiles = files.find((file) => file.id === activeFileIDs);
+  const fileListArr = searchedFiles.length > 0 ? searchedFiles : files;
   return (
     // px-0用来去除左边的边距
     <div className="App container-fluid px-0">
@@ -70,20 +96,19 @@ const App = () => {
           <FileSearch
             title="我的云文档"
             onFileSearch={(value) => {
-              console.log(value);
+              fileSearch(value);
             }}
           />
           <FileList
-            files={files}
+            files={fileListArr}
             onFileClick={(id) => {
               fileClick(id);
             }}
             onFileDelete={(id) => {
-              console.log("delete", id);
+              deleteFile(id);
             }}
-            onSaveEdit={(id, newValue) => {
-              console.log(id);
-              console.log(newValue);
+            onSaveEdit={(id, value) => {
+              updateFileName(id, value);
             }}
           />
           <div className="row no-gutters button-group">

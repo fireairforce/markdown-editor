@@ -15,14 +15,15 @@ const FileSearch = ({ title, onFileSearch }) => {
   const closeSearch = () => {
     setInputActive(false);
     setValue("");
+    onFileSearch("");
   };
 
   useEffect(() => {
-    if(enterPressed && inputActive) {
-      onFileSearch(value)
-    } 
-    if(escPressed && inputActive) {
-      closeSearch()
+    if (enterPressed && inputActive) {
+      onFileSearch(value);
+    }
+    if (escPressed && inputActive) {
+      closeSearch();
     }
     // const handleInputEvent = (e) => {
     //   const { keyCode } = e;
@@ -79,8 +80,8 @@ const FileSearch = ({ title, onFileSearch }) => {
 
 FileSearch.propTypes = {
   title: PropTypes.string,
-  onFileSearch: PropTypes.func.isRequired
-}
+  onFileSearch: PropTypes.func.isRequired,
+};
 
 FileSearch.defaultProps = {
   title: "我的云文档",
