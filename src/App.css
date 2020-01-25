@@ -7,3 +7,28 @@
 .c-link {
   cursor: pointer;
 }
+
+.start-page {
+  font-size: 30px;
+  height: 300px;
+  line-height: 300px;
+  color: #ccc;
+  cursor: pointer;
+  text-align: center;
+}
+
+.left-panel {
+  min-height: 100vh;
+  position: relative;
+}
+
+.button-group {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* height: 100%; */
+}
+
+.no-border {
+  border-radius: 0 !important;
+}

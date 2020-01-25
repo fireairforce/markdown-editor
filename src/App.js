@@ -1,5 +1,5 @@
-import React from "react";
-import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons'
+import React, { useState } from "react";
+import { faPlus, faFileImport } from "@fortawesome/free-solid-svg-icons";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "easymde/dist/easymde.min.css";
@@ -10,7 +10,16 @@ import TableList from "./components/TableList";
 import defaultFiles from "./utils/defaultFiles";
 import SimpleMDE from "react-simplemde-editor";
 
-function App() {
+const App = () => {
+  const [files, setFiles] = useState(defaultFiles);
+  const [activeFileIDs, setActiveFileIDs] = useState("");
+  const [openedFileIDs, setOpenedFileIDs] = useState([]);
+  const [unsavedFileIDs, setUnsavedFileIDs] = useState([]);
+  const openedFiles = openedFileIDs.map((openID) => {
+    return files.find((file) => file.id === openID);
+  });
+
+  const activeFiles = files.find((file) => file.id === activeFileIDs);
   return (
     // px-0用来去除左边的边距
     <div className="App container-fluid px-0">
@@ -24,7 +33,7 @@ function App() {
             }}
           />
           <FileList
-            files={defaultFiles}
+            files={files}
             onFileClick={(id) => {
               console.log(id);
             }}
@@ -36,42 +45,51 @@ function App() {
               console.log(newValue);
             }}
           />
-          <div className="row no-gutters">
+          <div className="row no-gutters button-group">
             <div className="col-6">
-              <BottomBtn 
-                text="新建"
-                colorClass='btn-primary'
-                icon={faPlus}
-              />
+              <BottomBtn text="新建" colorClass="btn-primary" icon={faPlus} />
             </div>
             <div className="col-6">
-            <BottomBtn 
+              <BottomBtn
                 text="导入"
-                colorClass='btn-success'
+                colorClass="btn-success"
                 icon={faFileImport}
               />
             </div>
           </div>
         </div>
         <div className="col-9 right-panel">
-          <TableList
-            files={defaultFiles}
-            onTabClick = {(e)=>{console.log(e);}}
-            onCloseTab = {(e) =>{console.log(`closing, ${e}`);}}
-            activeId="1"
-            unsaveIds={['1','2']}
-          />
-          <SimpleMDE 
-            value={defaultFiles[1].body}
-            onChange={(value) => {console.log(value);}}
-            options={{
-              minHeight: '515px',
-            }}
-          />
+          {!activeFiles && (
+            <div className="start-page">选择或创建新的 Markdown 文档</div>
+          )}
+          {activeFiles && (
+            <>
+              <TableList
+                files={openedFiles}
+                activeId={activeFileIDs}
+                unsaveIds={unsavedFileIDs}
+                onTabClick={(id) => {
+                  console.log(id);
+                }}
+                onCloseTab={(id) => {
+                  console.log(`closing, ${id}`);
+                }}
+              />
+              <SimpleMDE
+                value={activeFiles && activeFiles.body}
+                onChange={(value) => {
+                  console.log(value);
+                }}
+                options={{
+                  minHeight: "515px",
+                }}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default App;

@@ -19,6 +19,15 @@ hooks目录下为一些自定义的hooks
 
 选用[esaymde](https://github.com/Ionaru/easy-markdown-editor) 来作为本次开发的`md`文本编辑器。
 
+当然这个库有`react`版本的，因此可以直接考虑去使用`react`提供的:
+[react-simplemde-editor](https://github.com/RIP21/react-simplemde-editor)
+
+### state设计原则
+- 最小化(应用的最小可变状态集)
+- 不要重复
+- 有些数据可以根据已有的`State`计算出来
+- 使用多个`State`变量
+
 ## Notice
 - 不要过度思考去选择项目目录，直接开干
 
