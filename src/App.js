@@ -13,6 +13,8 @@ import BottomBtn from "./components/BottomBtn";
 import TableList from "./components/TableList";
 import defaultFiles from "./utils/defaultFiles";
 
+const fs = window.require('fs');
+
 const App = () => {
   const [files, setFiles] = useState(flattenArr(defaultFiles));
   const [activeFileIDs, setActiveFileIDs] = useState("");
