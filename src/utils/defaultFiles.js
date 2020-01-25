@@ -2,7 +2,7 @@ const defaultFiles = [
   {
     id: "1",
     title: "first post",
-    body: "should be aware of this",
+    body: "## come on! come on!",
     createdAt: 1563762965704,
   },
   {
@@ -14,7 +14,7 @@ const defaultFiles = [
   {
     id: "3",
     title: "你好世界",
-    body: "should be aware of this",
+    body: "## good luck",
     createdAt: 1563762965704,
   }
 ];
