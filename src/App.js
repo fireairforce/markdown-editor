@@ -1,25 +1,25 @@
 import React, { useState } from "react";
 import { faPlus, faFileImport } from "@fortawesome/free-solid-svg-icons";
+import SimpleMDE from "react-simplemde-editor";
+import uuidv4 from "uuid/v4";
+import { flattenArr, objToArr } from "./utils/helper";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "easymde/dist/easymde.min.css";
+
 import FileSearch from "./components/FileSearch";
 import FileList from "./components/FileList";
 import BottomBtn from "./components/BottomBtn";
 import TableList from "./components/TableList";
 import defaultFiles from "./utils/defaultFiles";
-import SimpleMDE from "react-simplemde-editor";
-import uuidv4 from "uuid/v4";
 
 const App = () => {
-  const [files, setFiles] = useState(defaultFiles);
+  const [files, setFiles] = useState(flattenArr(defaultFiles));
   const [activeFileIDs, setActiveFileIDs] = useState("");
   const [openedFileIDs, setOpenedFileIDs] = useState([]);
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([]);
   const [searchedFiles, setSearchedFiles] = useState([]);
-  const openedFiles = openedFileIDs.map((openID) => {
-    return files.find((file) => file.id === openID);
-  });
+  const filesArr = objToArr(files);
 
   const fileClick = (fileID) => {
     // set current active fileID
@@ -50,17 +50,13 @@ const App = () => {
 
   //  update title or body
   const updateContent = (id, updateContents, type = "title") => {
-    // loop throught the files and exchange a new body
-    const newFiles = files.map((file) => {
-      if (file.id === id && type === "value") {
-        file.body = updateContents;
-      } else if (file.id === id && type === "title") {
-        file.title = updateContents;
-        file.isNew = false;
-      }
-      return file;
-    });
-    setFiles(newFiles);
+    let newFile = {};
+    if (type === "value") {
+      newFile = { ...files[id], body: updateContents };
+    } else if (type === "value") {
+      newFile = { ...files[id], title: updateContents, isNew: true };
+    }
+    setFiles({ ...files, [id]: newFile });
     if (type === "value") {
       if (!unsavedFileIDs.includes(id)) {
         setUnsavedFileIDs([...unsavedFileIDs, id]);
@@ -69,35 +65,36 @@ const App = () => {
   };
 
   const deleteFile = (id) => {
-    const newFiles = files.filter((file) => file.id !== id);
-    setFiles(newFiles);
+    delete files[id];
+    setFiles(files);
     // close the tab if opened
     tabClose(id);
   };
 
   const fileSearch = (keyword) => {
     // filter out the new files based on the keyword
-    const newFiles = files.filter((file) => file.title.includes(keyword));
+    const newFiles = filesArr.filter((file) => file.title.includes(keyword));
+   
     setSearchedFiles(newFiles);
   };
 
   const createNewFile = () => {
     const newID = uuidv4();
-    const newFiles = [
-      ...files,
-      {
-        id: newID,
-        title: "",
-        body: "## 请输入 Markdown",
-        createdAt: new Date().getTime(),
-        isNew: true
-      },
-    ];
-    setFiles(newFiles);
+    const newFile = {
+      id: newID,
+      title: "",
+      body: "## 请输入 Markdown",
+      createdAt: new Date().getTime(),
+      isNew: true,
+    };
+    setFiles({ ...files, [newID]: newFile });
   };
 
-  const activeFiles = files.find((file) => file.id === activeFileIDs);
-  const fileListArr = searchedFiles.length > 0 ? searchedFiles : files;
+  const activeFiles = files[activeFileIDs];
+  const fileListArr = searchedFiles.length > 0 ? searchedFiles : filesArr;
+  const openedFiles = openedFileIDs.map((openID) => {
+    return files[openID];
+  });
   return (
     // px-0用来去除左边的边距
     <div className="App container-fluid px-0">

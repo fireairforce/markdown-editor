@@ -14,6 +14,8 @@ hooks目录下为一些自定义的hooks
 
 使用`uuid`提供创建文件时的唯一id值
 
+`flattern state`:使用索引值，来把对象打平来设计一个效率更高的`state`
+
 ### makrkown 库的选择
 - 支持预览模式
 - 支持高亮显示不同的内容
