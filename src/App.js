@@ -9,6 +9,7 @@ import BottomBtn from "./components/BottomBtn";
 import TableList from "./components/TableList";
 import defaultFiles from "./utils/defaultFiles";
 import SimpleMDE from "react-simplemde-editor";
+import uuidv4 from "uuid/v4";
 
 const App = () => {
   const [files, setFiles] = useState(defaultFiles);
@@ -55,6 +56,7 @@ const App = () => {
         file.body = updateContents;
       } else if (file.id === id && type === "title") {
         file.title = updateContents;
+        file.isNew = false;
       }
       return file;
     });
@@ -77,6 +79,21 @@ const App = () => {
     // filter out the new files based on the keyword
     const newFiles = files.filter((file) => file.title.includes(keyword));
     setSearchedFiles(newFiles);
+  };
+
+  const createNewFile = () => {
+    const newID = uuidv4();
+    const newFiles = [
+      ...files,
+      {
+        id: newID,
+        title: "",
+        body: "## 请输入 Markdown",
+        createdAt: new Date().getTime(),
+        isNew: true
+      },
+    ];
+    setFiles(newFiles);
   };
 
   const activeFiles = files.find((file) => file.id === activeFileIDs);
@@ -107,7 +124,12 @@ const App = () => {
           />
           <div className="row no-gutters button-group">
             <div className="col-6">
-              <BottomBtn text="新建" colorClass="btn-primary" icon={faPlus} />
+              <BottomBtn
+                text="新建"
+                colorClass="btn-primary"
+                icon={faPlus}
+                onBtnClick={createNewFile}
+              />
             </div>
             <div className="col-6">
               <BottomBtn
