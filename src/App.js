@@ -16,6 +16,7 @@ import defaultFiles from "./utils/defaultFiles";
 
 // require nodejs module
 const { join, basename, extname, dirname } = window.require("path");
+// use this module to get OS's path
 const { remote } = window.require("electron");
 
 const App = () => {
@@ -54,7 +55,7 @@ const App = () => {
       setActiveFileIDs();
     }
   };
-  
+
   //  update body
   const fileChange = (id, value) => {
     if (value !== files[id].body) {
@@ -68,17 +69,23 @@ const App = () => {
   };
 
   const updateFileName = (id, title, isNew) => {
-     const newPath = isNew ? join(savedLocation, `${title}.md`) : join(dirname(files[id].path), `${title}.md`)
-     const modifiedFile = { ...files[id], title, isNew: false, path: newPath }
-     const newFiles = { ...files, [id]: modifiedFile }
-     if(isNew) {
-       fileHelper.writeFile(newPath, files[id].body).then(() => {
-         setFiles(newFiles);
-       })
-     } else {
-
-     }
-  }
+    const newPath = isNew
+      ? join(savedLocation, `${title}.md`)
+      : join(dirname(files[id].path), `${title}.md`);
+    const modifiedFile = { ...files[id], title, isNew: false, path: newPath };
+    const newFiles = { ...files, [id]: modifiedFile };
+    console.log(isNew);
+    if (isNew) {
+      fileHelper.writeFile(newPath, files[id].body).then(() => {
+        setFiles(newFiles);
+      });
+    } else {
+      const oldPath = join(savedLocation, `${files[id].title}.md`);
+      fileHelper.renameFile(oldPath, newPath).then(() => {
+        setFiles(newFiles);
+      });
+    }
+  };
 
   const deleteFile = (id) => {
     delete files[id];
