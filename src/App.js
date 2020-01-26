@@ -24,14 +24,24 @@ const { join, basename, extname, dirname } = window.require("path");
 const { remote } = window.require("electron");
 // import electron-store to support local file store
 const Store = window.require("electron-store");
+const fileStore = new Store({ name: "Files data" });
 
-const store = new Store()
-store.set('name','zoomdong')
-
-console.log(store.get('name'));
+const saveFilesToStore = (files) => {
+  const filesStoreObj = objToArr(files).reduce((result, file) => {
+    const { id, path, title, createdAt } = file;
+    result[id] = {
+      id,
+      path,
+      title,
+      createdAt,
+    };
+    return result;
+  }, {});
+  fileStore.set("files", filesStoreObj);
+};
 
 const App = () => {
-  const [files, setFiles] = useState(flattenArr(defaultFiles));
+  const [files, setFiles] = useState(fileStore.get("files") || {});
   const [activeFileIDs, setActiveFileIDs] = useState("");
   const [openedFileIDs, setOpenedFileIDs] = useState([]);
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([]);
@@ -93,20 +103,25 @@ const App = () => {
     if (isNew) {
       fileHelper.writeFile(newPath, files[id].body).then(() => {
         setFiles(newFiles);
+        saveFilesToStore(newFiles);
       });
     } else {
       const oldPath = join(savedLocation, `${files[id].title}.md`);
       fileHelper.renameFile(oldPath, newPath).then(() => {
         setFiles(newFiles);
+        saveFilesToStore(newFiles);
       });
     }
   };
 
   const deleteFile = (id) => {
-    delete files[id];
-    setFiles(files);
-    // close the tab if opened
-    tabClose(id);
+    fileHelper.deleteFile(files[id].path).then(() => {
+      delete files[id];
+      setFiles(files);
+      saveFilesToStore(files);
+      // close the tab if opened
+      tabClose(id);
+    });
   };
 
   const fileSearch = (keyword) => {
