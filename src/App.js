@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { faPlus, faFileImport } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faFileImport, faSave } from "@fortawesome/free-solid-svg-icons";
 import SimpleMDE from "react-simplemde-editor";
 import uuidv4 from "uuid/v4";
 import { flattenArr, objToArr } from "./utils/helper";
@@ -28,6 +28,11 @@ const App = () => {
   const filesArr = objToArr(files);
 
   const savedLocation = remote.app.getPath("documents");
+  const activeFiles = files[activeFileIDs];
+  const fileListArr = searchedFiles.length > 0 ? searchedFiles : filesArr;
+  const openedFiles = openedFileIDs.map((openID) => {
+    return files[openID];
+  });
 
   const fileClick = (fileID) => {
     // set current active fileID
@@ -74,7 +79,6 @@ const App = () => {
       : join(dirname(files[id].path), `${title}.md`);
     const modifiedFile = { ...files[id], title, isNew: false, path: newPath };
     const newFiles = { ...files, [id]: modifiedFile };
-    console.log(isNew);
     if (isNew) {
       fileHelper.writeFile(newPath, files[id].body).then(() => {
         setFiles(newFiles);
@@ -113,11 +117,12 @@ const App = () => {
     setFiles({ ...files, [newID]: newFile });
   };
 
-  const activeFiles = files[activeFileIDs];
-  const fileListArr = searchedFiles.length > 0 ? searchedFiles : filesArr;
-  const openedFiles = openedFileIDs.map((openID) => {
-    return files[openID];
-  });
+  const saveCurrentFile = () => {
+    fileHelper.writeFile(join(savedLocation, `${activeFiles.title}.md`),activeFiles.body).then(() => {
+      setUnsavedFileIDs(unsavedFileIDs.filter(id => activeFiles.id !== id))
+    })
+  }
+
   return (
     // px-0用来去除左边的边距
     <div className="App container-fluid px-0">
@@ -184,6 +189,12 @@ const App = () => {
                 options={{
                   minHeight: "515px",
                 }}
+              />
+              <BottomBtn 
+                text="保存"
+                colorClass='btn-success'
+                icon={faSave}
+                onBtnClick={saveCurrentFile}
               />
             </>
           )}
