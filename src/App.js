@@ -3,6 +3,7 @@ import { faPlus, faFileImport } from "@fortawesome/free-solid-svg-icons";
 import SimpleMDE from "react-simplemde-editor";
 import uuidv4 from "uuid/v4";
 import { flattenArr, objToArr } from "./utils/helper";
+import fileHelper from "./utils/fileHelper";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "easymde/dist/easymde.min.css";
@@ -13,7 +14,9 @@ import BottomBtn from "./components/BottomBtn";
 import TableList from "./components/TableList";
 import defaultFiles from "./utils/defaultFiles";
 
-// const fs = window.require('fs');
+// require nodejs module
+const { join, basename, extname, dirname } = window.require("path");
+const { remote } = window.require("electron");
 
 const App = () => {
   const [files, setFiles] = useState(flattenArr(defaultFiles));
@@ -22,6 +25,8 @@ const App = () => {
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([]);
   const [searchedFiles, setSearchedFiles] = useState([]);
   const filesArr = objToArr(files);
+
+  const savedLocation = remote.app.getPath("documents");
 
   const fileClick = (fileID) => {
     // set current active fileID
@@ -49,22 +54,31 @@ const App = () => {
       setActiveFileIDs();
     }
   };
-
-  //  update title or body
-  const updateContent = (id, updateContents, type = "title") => {
-    let newFile = {};
-    if (type === "value") {
-      newFile = { ...files[id], body: updateContents };
-    } else if (type === "value") {
-      newFile = { ...files[id], title: updateContents, isNew: true };
-    }
-    setFiles({ ...files, [id]: newFile });
-    if (type === "value") {
+  
+  //  update body
+  const fileChange = (id, value) => {
+    if (value !== files[id].body) {
+      const newFile = { ...files[id], body: value };
+      setFiles({ ...files, [id]: newFile });
+      // update unsavedIDs
       if (!unsavedFileIDs.includes(id)) {
         setUnsavedFileIDs([...unsavedFileIDs, id]);
       }
     }
   };
+
+  const updateFileName = (id, title, isNew) => {
+     const newPath = isNew ? join(savedLocation, `${title}.md`) : join(dirname(files[id].path), `${title}.md`)
+     const modifiedFile = { ...files[id], title, isNew: false, path: newPath }
+     const newFiles = { ...files, [id]: modifiedFile }
+     if(isNew) {
+       fileHelper.writeFile(newPath, files[id].body).then(() => {
+         setFiles(newFiles);
+       })
+     } else {
+
+     }
+  }
 
   const deleteFile = (id) => {
     delete files[id];
@@ -76,7 +90,7 @@ const App = () => {
   const fileSearch = (keyword) => {
     // filter out the new files based on the keyword
     const newFiles = filesArr.filter((file) => file.title.includes(keyword));
-   
+
     setSearchedFiles(newFiles);
   };
 
@@ -117,9 +131,7 @@ const App = () => {
             onFileDelete={(id) => {
               deleteFile(id);
             }}
-            onSaveEdit={(id, value) => {
-              updateContent(id, value, "title");
-            }}
+            onSaveEdit={updateFileName}
           />
           <div className="row no-gutters button-group">
             <div className="col-6">
@@ -160,7 +172,7 @@ const App = () => {
                 key={activeFiles && activeFileIDs}
                 value={activeFiles && activeFiles.body}
                 onChange={(value) => {
-                  updateContent(activeFiles.id, value, "value");
+                  fileChange(activeFiles.id, value);
                 }}
                 options={{
                   minHeight: "515px",
