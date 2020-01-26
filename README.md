@@ -22,7 +22,6 @@ hooks目录下为一些自定义的hooks
 const fs = window.require('fs')
 ```
 
-
 ### makrkown 库的选择
 - 支持预览模式
 - 支持高亮显示不同的内容
@@ -38,6 +37,23 @@ const fs = window.require('fs')
 - 不要重复
 - 有些数据可以根据已有的`State`计算出来
 - 使用多个`State`变量
+
+### 持久化保存数据(解决方案)
+- 数据库软件的方案
+- 浏览器相关的解决方案
+- 使用`Electron Strore`(文件保存方式)
+
+这里使用`electron store`来提供解决方案
+地址:https://github.com/sindresorhus/electron-store
+```js
+const Store = window.require("electron-store");
+
+const store = new Store()
+store.set('name','zoomdong')
+
+console.log(store.get('name'));
+```
+
 
 ## Notice
 - 不要过度思考去选择项目目录，直接开干

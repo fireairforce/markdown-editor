@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { faPlus, faFileImport, faSave } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faFileImport,
+  faSave,
+} from "@fortawesome/free-solid-svg-icons";
 import SimpleMDE from "react-simplemde-editor";
 import uuidv4 from "uuid/v4";
 import { flattenArr, objToArr } from "./utils/helper";
@@ -18,6 +22,13 @@ import defaultFiles from "./utils/defaultFiles";
 const { join, basename, extname, dirname } = window.require("path");
 // use this module to get OS's path
 const { remote } = window.require("electron");
+// import electron-store to support local file store
+const Store = window.require("electron-store");
+
+const store = new Store()
+store.set('name','zoomdong')
+
+console.log(store.get('name'));
 
 const App = () => {
   const [files, setFiles] = useState(flattenArr(defaultFiles));
@@ -118,10 +129,15 @@ const App = () => {
   };
 
   const saveCurrentFile = () => {
-    fileHelper.writeFile(join(savedLocation, `${activeFiles.title}.md`),activeFiles.body).then(() => {
-      setUnsavedFileIDs(unsavedFileIDs.filter(id => activeFiles.id !== id))
-    })
-  }
+    fileHelper
+      .writeFile(
+        join(savedLocation, `${activeFiles.title}.md`),
+        activeFiles.body,
+      )
+      .then(() => {
+        setUnsavedFileIDs(unsavedFileIDs.filter((id) => activeFiles.id !== id));
+      });
+  };
 
   return (
     // px-0用来去除左边的边距
@@ -190,9 +206,9 @@ const App = () => {
                   minHeight: "515px",
                 }}
               />
-              <BottomBtn 
+              <BottomBtn
                 text="保存"
-                colorClass='btn-success'
+                colorClass="btn-success"
                 icon={faSave}
                 onBtnClick={saveCurrentFile}
               />
