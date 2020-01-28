@@ -4,6 +4,7 @@ import { faEdit, faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
 import PropTypes from "prop-types";
 import useKeyPress from "../../hooks/useKeyPress";
+import useContextMenu from "../../hooks/useContextMenu";
 
 const { remote } = window.require("electron");
 const { Menu, MenuItem } = remote;
@@ -15,6 +16,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const enterPressed = useKeyPress(13);
   // esc键
   const escPressed = useKeyPress(27);
+  // 多次渲染的时候保持引用功能
   let node = useRef(null);
   const closeSearch = (editItem) => {
     setEditStatus(false);
@@ -24,41 +26,26 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
     }
   };
 
-  useEffect(() => {
-    const menu = new Menu();
-    menu.append(
-      new MenuItem({
-        label: "打开",
-        click: () => {
-          console.log(`clicking`);
-        },
-      }),
-    );
-    menu.append(
-      new MenuItem({
-        label: "重命名",
-        click: () => {
-          console.log(`renaming`);
-        },
-      }),
-    );
-    menu.append(
-      new MenuItem({
-        label: "删除",
-        click: () => {
-          console.log(`deleting`);
-        },
-      }),
-    );
-    const handleContextMenu = (e) => {
-      // 在remote获取到当前页面的时候弹出子菜单
-      menu.popup({ window: remote.getCurrentWindow() });
-    };
-    window.addEventListener("contextmenu", handleContextMenu);
-    return () => {
-      window.removeEventListener("contextmenu", handleContextMenu);
-    };
-  });
+  const clickItem =  useContextMenu([
+    {
+      label: "打开",
+      click: () => {
+        console.log(`clicking`,clickItem);
+      },
+    },
+    {
+      label: "重命名",
+      click: () => {
+        console.log(`renaming`);
+      },
+    },
+    {
+      label: "删除",
+      click: () => {
+        console.log(`deleting`);
+      },
+    },
+  ],'.file-list');
 
   useEffect(() => {
     const editItem = files.find((file) => file.id === editStatus);
