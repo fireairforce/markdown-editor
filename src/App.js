@@ -113,7 +113,7 @@ const App = () => {
         saveFilesToStore(newFiles);
       });
     } else {
-      const oldPath = join(savedLocation, `${files[id].title}.md`);
+      const oldPath = files[id].path;
       fileHelper.renameFile(oldPath, newPath).then(() => {
         setFiles(newFiles);
         saveFilesToStore(newFiles);
