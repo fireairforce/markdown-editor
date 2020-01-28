@@ -5,9 +5,7 @@ import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
 import PropTypes from "prop-types";
 import useKeyPress from "../../hooks/useKeyPress";
 import useContextMenu from "../../hooks/useContextMenu";
-
-const { remote } = window.require("electron");
-const { Menu, MenuItem } = remote;
+import { getParentNode } from "../../utils/helper";
 
 const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const [editStatus, setEditStatus] = useState(false);
@@ -26,26 +24,34 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
     }
   };
 
-  const clickItem =  useContextMenu([
-    {
-      label: "打开",
-      click: () => {
-        console.log(`clicking`,clickItem);
+  const clickItem = useContextMenu(
+    [
+      {
+        label: "打开",
+        click: () => {
+          const parentElement = getParentNode(clickItem.current, "file-item");
+          onFileClick(parentElement.dataset.id);
+        },
       },
-    },
-    {
-      label: "重命名",
-      click: () => {
-        console.log(`renaming`);
+      {
+        label: "重命名",
+        click: () => {
+          const parentElement = getParentNode(clickItem.current, "file-item");
+          setEditStatus(parentElement.dataset.id);
+          setValue(parentElement.dataset.title);
+        },
       },
-    },
-    {
-      label: "删除",
-      click: () => {
-        console.log(`deleting`);
+      {
+        label: "删除",
+        click: () => {
+          const parentElement = getParentNode(clickItem.current, "file-item");
+          onFileDelete(parentElement.dataset.id);
+        },
       },
-    },
-  ],'.file-list');
+    ],
+    ".file-list",
+    [files],
+  );
 
   useEffect(() => {
     const editItem = files.find((file) => file.id === editStatus);
@@ -79,6 +85,9 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
         <li
           className="mx-0 row list-group-item bg-light d-flex align-items-center file-item"
           key={file.id}
+          // 使用data-id来存储一些信息
+          data-id={file.id}
+          data-title={file.title}
         >
           {file.id !== editStatus && !file.isNew && (
             <>
