@@ -153,7 +153,7 @@ const App = () => {
   const saveCurrentFile = () => {
     fileHelper
       .writeFile(
-        join(savedLocation, `${activeFiles.title}.md`),
+        join(activeFiles.path, `${activeFiles.title}.md`),
         activeFiles.body,
       )
       .then(() => {
@@ -173,8 +173,41 @@ const App = () => {
           },
         ],
       })
-      .then((path) => {
-        console.log(path.filePaths);
+      .then((res) => {
+        let paths = res.filePaths;
+        if (Array.isArray(paths)) {
+          // filter out the path we already have in electron store
+          // ['Users/wudong/xxx']
+          const fileteredPath = paths.filter((path) => {
+            const alreadyAdded = Object.values(files).find((file) => {
+              return file.path === path;
+            });
+            return !alreadyAdded;
+          });
+          // flatten the array
+          const importFilesArr = fileteredPath.map((path) => {
+            return {
+              id: uuidv4(),
+              title: basename(path, extname(path)),
+              path,
+            };
+          });
+          // console.log(importFilesArr);
+          // get the new files object in flattenArr
+          const newFiles = { ...files, ...flattenArr(importFilesArr) };
+          // setState and update electron store
+          setFiles(newFiles);
+          saveFilesToStore(newFiles);
+          // console.log(importFilesArr);
+          if (importFilesArr.length > 0) {
+            remote.dialog.showMessageBox({
+              type: "info",
+              title: `成功导入了${importFilesArr.length}个文件`,
+              message: `成功导入了${importFilesArr.length}个文件`,
+              buttons: ["好的"],
+            });
+          }
+        }
       });
   };
 
