@@ -5,6 +5,9 @@ import { faMarkdown } from "@fortawesome/free-brands-svg-icons";
 import PropTypes from "prop-types";
 import useKeyPress from "../../hooks/useKeyPress";
 
+const { remote } = window.require("electron");
+const { Menu, MenuItem } = remote;
+
 const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const [editStatus, setEditStatus] = useState(false);
   const [value, setValue] = useState("");
@@ -16,15 +19,51 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const closeSearch = (editItem) => {
     setEditStatus(false);
     setValue("");
-    if(editItem.isNew) {
+    if (editItem.isNew) {
       onFileDelete(editItem.id);
     }
   };
 
   useEffect(() => {
+    const menu = new Menu();
+    menu.append(
+      new MenuItem({
+        label: "打开",
+        click: () => {
+          console.log(`clicking`);
+        },
+      }),
+    );
+    menu.append(
+      new MenuItem({
+        label: "重命名",
+        click: () => {
+          console.log(`renaming`);
+        },
+      }),
+    );
+    menu.append(
+      new MenuItem({
+        label: "删除",
+        click: () => {
+          console.log(`deleting`);
+        },
+      }),
+    );
+    const handleContextMenu = (e) => {
+      // 在remote获取到当前页面的时候弹出子菜单
+      menu.popup({ window: remote.getCurrentWindow() });
+    };
+    window.addEventListener("contextmenu", handleContextMenu);
+    return () => {
+      window.removeEventListener("contextmenu");
+    };
+  });
+
+  useEffect(() => {
     const editItem = files.find((file) => file.id === editStatus);
-    if (enterPressed && editStatus && value.trim() !== '') {
-      onSaveEdit(editItem.id, value,editItem.isNew);
+    if (enterPressed && editStatus && value.trim() !== "") {
+      onSaveEdit(editItem.id, value, editItem.isNew);
       setEditStatus(false);
       setValue("");
     }
@@ -100,7 +139,9 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
               <button
                 type="button"
                 className="icon-button col-2"
-                onClick={ () => {closeSearch(file)}}
+                onClick={() => {
+                  closeSearch(file);
+                }}
               >
                 <FontAwesomeIcon title="关闭" icon={faTimes} size="lg" />
               </button>

@@ -61,6 +61,11 @@ console.log(store.get('name'));
 
 这里可以直接在`app.js`里面使用`remote.dialog.showDialog()`来打开对话框。
 
+### 菜单
+- 原生应用菜单(就是电脑上面的`tab`栏目)
+- 上下文菜单(点击右键弹出来的菜单)
+
+[文档地址](https://www.electronjs.org/docs/api/menu-item#menuitemmenu)
 
 ## Notice
 - 不要过度思考去选择项目目录，直接开干

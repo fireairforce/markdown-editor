@@ -16,7 +16,6 @@ import FileSearch from "./components/FileSearch";
 import FileList from "./components/FileList";
 import BottomBtn from "./components/BottomBtn";
 import TableList from "./components/TableList";
-import defaultFiles from "./utils/defaultFiles";
 
 // require nodejs module
 const { join, basename, extname, dirname } = window.require("path");
