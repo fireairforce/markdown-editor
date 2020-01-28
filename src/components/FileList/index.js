@@ -56,7 +56,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
     };
     window.addEventListener("contextmenu", handleContextMenu);
     return () => {
-      window.removeEventListener("contextmenu");
+      window.removeEventListener("contextmenu", handleContextMenu);
     };
   });
 

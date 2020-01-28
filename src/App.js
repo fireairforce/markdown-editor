@@ -150,14 +150,10 @@ const App = () => {
   };
 
   const saveCurrentFile = () => {
-    fileHelper
-      .writeFile(
-        join(activeFiles.path, `${activeFiles.title}.md`),
-        activeFiles.body,
-      )
-      .then(() => {
-        setUnsavedFileIDs(unsavedFileIDs.filter((id) => activeFiles.id !== id));
-      });
+    const { path, body } = activeFiles;
+    fileHelper.writeFile(path, body).then(() => {
+      setUnsavedFileIDs(unsavedFileIDs.filter((id) => activeFiles.id !== id));
+    });
   };
   // 使用remote模块
   const importFiles = () => {
