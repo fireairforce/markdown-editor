@@ -59,11 +59,11 @@ const App = () => {
     // set current active fileID
     setActiveFileIDs(fileID);
     const currentFile = files[fileID];
-    if(!currentFile.isLoaded) {
+    if (!currentFile.isLoaded) {
       fileHelper.readFile(currentFile.path).then((value) => {
-        const newFile = { ...files[fileID], body: value, isLoaded: true }
-        setFiles({ ...files, [fileID]: newFile })
-      })
+        const newFile = { ...files[fileID], body: value, isLoaded: true };
+        setFiles({ ...files, [fileID]: newFile });
+      });
     }
     // if openedFileIDs don't contain fileID
     if (!openedFileIDs.includes(fileID)) {
@@ -160,6 +160,23 @@ const App = () => {
         setUnsavedFileIDs(unsavedFileIDs.filter((id) => activeFiles.id !== id));
       });
   };
+  // 使用remote模块
+  const importFiles = () => {
+    remote.dialog
+      .showOpenDialog({
+        title: "选择导入的markdown文件",
+        properties: ["openFile", "multiSelections"],
+        filters: [
+          {
+            name: "Markdown files",
+            extensions: ["md"],
+          },
+        ],
+      })
+      .then((path) => {
+        console.log(path.filePaths);
+      });
+  };
 
   return (
     // px-0用来去除左边的边距
@@ -197,6 +214,7 @@ const App = () => {
                 text="导入"
                 colorClass="btn-success"
                 icon={faFileImport}
+                onBtnClick={importFiles}
               />
             </div>
           </div>

@@ -54,6 +54,13 @@ store.set('name','zoomdong')
 console.log(store.get('name'));
 ```
 
+### 导入文件
+使用`dialog`模块来完成导入的功能。
+
+[文档地址](https://www.electronjs.org/docs/api/dialog#dialogshowerrorboxtitle-content)
+
+这里可以直接在`app.js`里面使用`remote.dialog.showDialog()`来打开对话框。
+
 
 ## Notice
 - 不要过度思考去选择项目目录，直接开干
