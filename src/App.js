@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   faPlus,
   faFileImport,
@@ -20,7 +20,7 @@ import TableList from "./components/TableList";
 // require nodejs module
 const { join, basename, extname, dirname } = window.require("path");
 // use this module to get OS's path
-const { remote } = window.require("electron");
+const { remote, ipcRenderer } = window.require("electron");
 // import electron-store to support local file store
 const Store = window.require("electron-store");
 const fileStore = new Store({ name: "Files data" });
@@ -205,6 +205,17 @@ const App = () => {
         }
       });
   };
+
+  useEffect(() => {
+    const callback = () => {
+      console.log(`hello world`);
+    };
+    ipcRenderer.on("create-new-file", callback);
+    // 在执行结束之后将事件进行一个清除
+    return () => {
+      ipcRenderer.removeListener("create-new-file", callback);
+    };
+  });
 
   return (
     // px-0用来去除左边的边距
