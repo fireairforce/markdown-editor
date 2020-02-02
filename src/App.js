@@ -16,11 +16,12 @@ import FileSearch from "./components/FileSearch";
 import FileList from "./components/FileList";
 import BottomBtn from "./components/BottomBtn";
 import TableList from "./components/TableList";
+import useIpcRenderer from "./hooks/useIpcRender";
 
 // require nodejs module
 const { join, basename, extname, dirname } = window.require("path");
 // use this module to get OS's path
-const { remote, ipcRenderer } = window.require("electron");
+const { remote } = window.require("electron");
 // import electron-store to support local file store
 const Store = window.require("electron-store");
 const fileStore = new Store({ name: "Files data" });
@@ -53,7 +54,6 @@ const App = () => {
   const openedFiles = openedFileIDs.map((openID) => {
     return files[openID];
   });
-
   const fileClick = (fileID) => {
     // set current active fileID
     setActiveFileIDs(fileID);
@@ -150,10 +150,12 @@ const App = () => {
   };
 
   const saveCurrentFile = () => {
-    const { path, body } = activeFiles;
-    fileHelper.writeFile(path, body).then(() => {
-      setUnsavedFileIDs(unsavedFileIDs.filter((id) => activeFiles.id !== id));
-    });
+    if (activeFiles) {
+      const { path, body } = activeFiles;
+      fileHelper.writeFile(path, body).then(() => {
+        setUnsavedFileIDs(unsavedFileIDs.filter((id) => activeFiles.id !== id));
+      });
+    }
   };
   // 使用remote模块
   const importFiles = () => {
@@ -206,15 +208,21 @@ const App = () => {
       });
   };
 
-  useEffect(() => {
-    const callback = () => {
-      console.log(`hello world`);
-    };
-    ipcRenderer.on("create-new-file", callback);
-    // 在执行结束之后将事件进行一个清除
-    return () => {
-      ipcRenderer.removeListener("create-new-file", callback);
-    };
+  // useEffect(() => {
+  //   const callback = () => {
+  //     console.log(`hello world`);
+  //   };
+  //   ipcRenderer.on("create-new-file", callback);
+  //   // 在执行结束之后将事件进行一个清除
+  //   return () => {
+  //     ipcRenderer.removeListener("create-new-file", callback);
+  //   };
+  // });
+
+  useIpcRenderer({
+    "create-new-file": createNewFile,
+    "import-file": importFiles,
+    "save-edit-file": saveCurrentFile,
   });
 
   return (
@@ -284,12 +292,6 @@ const App = () => {
                 options={{
                   minHeight: "515px",
                 }}
-              />
-              <BottomBtn
-                text="保存"
-                colorClass="btn-success"
-                icon={faSave}
-                onBtnClick={saveCurrentFile}
               />
             </>
           )}
